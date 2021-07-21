@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.projetospring.models.Usuario;
 import br.com.projetospring.repositories.UsuarioRepository;
 
-
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(value = "/usuario")
 public class Controller {
@@ -25,7 +26,8 @@ public class Controller {
 	@Autowired
 	private UsuarioRepository usuarioRepository;
 	
-	@GetMapping(value = "{id}", produces = "application/json")
+	@CrossOrigin(origins = {"*"})
+	@GetMapping(value = "/{id}", produces = "application/json")
 	public ResponseEntity<Usuario> consultarUsuario(@PathVariable Long id){
 		
 		Usuario usuario = usuarioRepository.findById(id).get();
@@ -59,7 +61,12 @@ public class Controller {
 		
 		
 		if (usuario.getId() == null) {
-			return new ResponseEntity<String>("ID não informado", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<String>("ID não informado", HttpStatus.BAD_REQUEST);
+		}
+		
+		
+		for (int i = 0; i < usuario.getTelefones().size(); i++) {
+			usuario.getTelefones().get(i).setUsuario(usuario);
 		}
 		
 		Usuario usuarioAtualizado = usuarioRepository.save(usuario);

@@ -1,19 +1,27 @@
 package br.com.projetospring.models;
 
-import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 @Entity
-public class Usuario implements Serializable{
+public class Usuario implements UserDetails{
 
 	private static final long serialVersionUID = 1L;
 	
@@ -30,11 +38,21 @@ public class Usuario implements Serializable{
 	@Column(nullable = false)
 	private String nome;
 	
-	@OneToMany(mappedBy = "usuario", orphanRemoval = true, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "usuario", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Telefone> telefones = new ArrayList<Telefone>();
 	
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(
+			name = "usuario_role", joinColumns = @JoinColumn(name = "usuario_id",
+			referencedColumnName = "id", table = "usuario",
+			unique = false, foreignKey = @ForeignKey(name = "usuario_fk")), 
+			inverseJoinColumns = @JoinColumn (name = "role_id",
+			referencedColumnName = "id", table = "role",
+			unique = false, updatable = false,
+			foreignKey = @ForeignKey(name = "role_fk"))
+	)
+	private List<Role> roles = new ArrayList<Role>();
 	
-
 	public List<Telefone> getTelefones() {
 		return telefones;
 	}
@@ -97,6 +115,47 @@ public class Usuario implements Serializable{
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
+		return true;
+	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return roles;
+	}
+
+	@Override
+	public String getPassword() {
+		// TODO Auto-generated method stub
+		return this.senha;
+	}
+
+	@Override
+	public String getUsername() {
+		// TODO Auto-generated method stub
+		return this.login;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		// TODO Auto-generated method stub
 		return true;
 	}
 	

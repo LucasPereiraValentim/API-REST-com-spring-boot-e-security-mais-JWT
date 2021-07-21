@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @EnableJpaRepositories(basePackages = {"br.com.projetospring.repositories"})
 @EnableTransactionManagement
 @RestController
+@EnableWebSecurity
 @EnableAutoConfiguration
 public class ProjetoSpringRestApiApplication {
 	public static void main(String[] args) {
