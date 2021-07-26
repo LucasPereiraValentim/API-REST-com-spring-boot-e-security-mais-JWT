@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,13 +47,22 @@ public class Controller {
 	@PostMapping(value = "/", produces = "application/json")
 	public ResponseEntity<Usuario> cadastrar(@RequestBody Usuario usuario){
 		
-		for (int i = 0; i < usuario.getTelefones().size(); i++) {
-			usuario.getTelefones().get(i).setUsuario(usuario);
+		if (usuario != null) {
+		
+			String senhaCriptografada = new BCryptPasswordEncoder().encode(usuario.getPassword());
+			
+			usuario.setSenha(senhaCriptografada);
+			
+			for (int i = 0; i < usuario.getTelefones().size(); i++) {
+				usuario.getTelefones().get(i).setUsuario(usuario);
+			}
+			
+			Usuario usuarioSalvo = usuarioRepository.save(usuario);
+			return new ResponseEntity<Usuario>(usuarioSalvo, HttpStatus.CREATED);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		
-		Usuario usuarioSalvo = usuarioRepository.save(usuario);
-		
-		return new ResponseEntity<Usuario>(usuarioSalvo, HttpStatus.CREATED);
 	}
 	
 	@PutMapping(value = "/")
@@ -61,17 +71,21 @@ public class Controller {
 		
 		if (usuario.getId() == null) {
 			return new ResponseEntity<String>("ID não informado", HttpStatus.BAD_REQUEST);
+		} else {
+			
+			String senhaCriptografada = new BCryptPasswordEncoder().encode(usuario.getSenha());
+			
+			usuario.setSenha(senhaCriptografada);
+			
+			for (int i = 0; i < usuario.getTelefones().size(); i++) {
+				usuario.getTelefones().get(i).setUsuario(usuario);
+			}
+			
+			Usuario usuarioAtualizado = usuarioRepository.save(usuario);
+			
+			
+			return new ResponseEntity<Usuario>(usuarioAtualizado, HttpStatus.OK);
 		}
-		
-		
-		for (int i = 0; i < usuario.getTelefones().size(); i++) {
-			usuario.getTelefones().get(i).setUsuario(usuario);
-		}
-		
-		Usuario usuarioAtualizado = usuarioRepository.save(usuario);
-		
-		
-		return new ResponseEntity<Usuario>(usuarioAtualizado, HttpStatus.OK);
 	}
 	
 	@DeleteMapping(value = "/{id}", produces = "application/text")
