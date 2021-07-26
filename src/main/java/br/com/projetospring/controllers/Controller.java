@@ -26,7 +26,6 @@ public class Controller {
 	@Autowired
 	private UsuarioRepository usuarioRepository;
 	
-	@CrossOrigin(origins = {"*"})
 	@GetMapping(value = "/{id}", produces = "application/json")
 	public ResponseEntity<Usuario> consultarUsuario(@PathVariable Long id){
 		

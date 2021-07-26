@@ -7,7 +7,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import br.com.projetospring.services.ImplementacaoUserDetailsService;
@@ -19,21 +19,21 @@ public class WebConfigSecurity extends WebSecurityConfigurerAdapter{
 	@Autowired
 	private ImplementacaoUserDetailsService detailsService;
 	
-	//Confira as solicitações de acesso
+	//solicitações de acesso
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		
 		//Ativando a proteçao contra usuários que não estão validados por token
-		http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-		// Ativando a permissão para acessar a pag de login
-		.disable().authorizeRequests().antMatchers("/").permitAll()
-		.antMatchers("/index").permitAll()
+		http.csrf().disable()
+		.authorizeRequests().antMatchers("/index").permitAll()
 		//URL de logout - Redireciona para pag de login
 		.anyRequest().authenticated().and().logout().logoutSuccessUrl("/index")
 		//Mapeia URL de logout e invalida os dados do usuário
-		.logoutRequestMatcher(new AntPathRequestMatcher("/logout"));
-		
+		.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
 		//Filtra requisições de login para autenticação
+		.and().addFilterBefore(new JwtLoginFilter("/login", authenticationManager()),
+				UsernamePasswordAuthenticationFilter.class)
+		.addFilterBefore(new JwtApiAutenticacaoFilter(), UsernamePasswordAuthenticationFilter.class);
 		
 	}
 	
