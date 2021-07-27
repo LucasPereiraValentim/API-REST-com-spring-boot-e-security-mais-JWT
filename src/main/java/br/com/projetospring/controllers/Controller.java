@@ -28,20 +28,30 @@ public class Controller {
 	private UsuarioRepository usuarioRepository;
 	
 	@GetMapping(value = "/{id}", produces = "application/json")
-	public ResponseEntity<Usuario> consultarUsuario(@PathVariable Long id){
+	public ResponseEntity<?> consultarUsuario(@PathVariable Long id){
 		
-		Usuario usuario = usuarioRepository.findById(id).get();
-		
-		return new ResponseEntity<Usuario>(usuario, HttpStatus.OK);
+		if (id != null) {
+			Usuario usuario = usuarioRepository.findById(id).get();
+			if (usuario != null) {
+				return new ResponseEntity<Usuario>(usuario, HttpStatus.OK);
+			}else {
+				return new ResponseEntity<String>("Usuário não encontrato", HttpStatus.NO_CONTENT);
+			}
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 	}
 	
 	
 	@GetMapping(value = "/lista", produces = "application/json")
 	public ResponseEntity<List<Usuario>> lista(){
-		
 		List<Usuario> lista = usuarioRepository.findAll();
 		
-		return new ResponseEntity<List<Usuario>>(lista, HttpStatus.OK);
+		if (lista.isEmpty()) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		} else {
+			return new ResponseEntity<List<Usuario>>(lista, HttpStatus.OK);
+		}
 	}
 	
 	@PostMapping(value = "/", produces = "application/json")
@@ -72,7 +82,6 @@ public class Controller {
 		if (usuario.getId() == null) {
 			return new ResponseEntity<String>("ID não informado", HttpStatus.BAD_REQUEST);
 		} else {
-			
 			String senhaCriptografada = new BCryptPasswordEncoder().encode(usuario.getSenha());
 			
 			usuario.setSenha(senhaCriptografada);
@@ -91,9 +100,15 @@ public class Controller {
 	@DeleteMapping(value = "/{id}", produces = "application/text")
 	public ResponseEntity<?> excluir(@PathVariable Long id){
 		
-		usuarioRepository.deleteById(id);
+		if (id != null) {
+			usuarioRepository.deleteById(id);
+			return new ResponseEntity<String>("Usuário excluído com sucesso", HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 		
 		
-		return new ResponseEntity<String>("Usuário excluído com sucesso", HttpStatus.OK);
+		
+		
 	}
 }

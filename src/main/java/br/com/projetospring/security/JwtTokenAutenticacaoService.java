@@ -1,6 +1,7 @@
-package br.com.projetospring.services;
+package br.com.projetospring.security;
 
 import java.util.Date;
+
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,33 +22,30 @@ import io.jsonwebtoken.SignatureAlgorithm;
 public class JwtTokenAutenticacaoService {
 	
 	//Tempo de duração do TOKEN
-	private static final long EXPIRATION_TIME = 172800000;
+	static final long EXPIRATION_TIME = 860_000_000;
 	
 	//Senha unica para compor a autenticação
-	private static final String SECRET = "SENHASECRETA";
+	static final String SECRET = "mySecret";
 	
-	private static final String TOKEN_PREFIX = "Bearer";
+	static final String TOKEN_PREFIX = "Bearer";
 	
-	private static final String HEADER_STRING = "Authorization";
+	static final String HEADER_STRING = "Authorization";
 	
 	
 	//Gerando TOKEN de autenticação e retornando ao corbo da resposta
 	public void addAuthentication(HttpServletResponse response, String userName) throws Exception{
 		
-		String jwt = Jwts.builder() //Chama o gerador de TOKEN
+		String JWT = Jwts.builder() //Chama o gerador de TOKEN
 				.setSubject(userName) // add usuário
 				.setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) // tempo de expiração
 				.signWith(SignatureAlgorithm.HS512, SECRET).compact(); // compacta e gera o TOKEN
 		
-		//Concatena TOKEN com PREFIX
-		String token = TOKEN_PREFIX + " " + jwt;
+		String token = TOKEN_PREFIX + " " + JWT;
 		
-		//Add no cabeçalho htto
+		//Add no cabeçalho http
 		response.addHeader(HEADER_STRING, token);
 		
 		response.getWriter().write("{\"Authorization\": \""+ token + "\"}");;
-		
-		
 	}
 	
 	
@@ -55,7 +53,7 @@ public class JwtTokenAutenticacaoService {
 	public Authentication getAuthentication(HttpServletRequest request) {
 		
 		//Pega o TOKEN enviado ao cabeçalho http
-		
+		System.out.println(request.getHeader(HEADER_STRING));
 		String token = request.getHeader(HEADER_STRING);
 		
 		if (token != null) {

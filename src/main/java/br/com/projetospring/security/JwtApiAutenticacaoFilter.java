@@ -12,8 +12,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
-import br.com.projetospring.services.JwtTokenAutenticacaoService;
-
 public class JwtApiAutenticacaoFilter extends GenericFilterBean{
 
 	@Override

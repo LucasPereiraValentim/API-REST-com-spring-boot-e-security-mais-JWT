@@ -17,7 +17,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.projetospring.models.Usuario;
-import br.com.projetospring.services.JwtTokenAutenticacaoService;
 
 //Estabelece o gerenciador do TOKEN
 public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter{
