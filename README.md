@@ -5,6 +5,7 @@ Um CRUD, com autenticação usando JWT, filtros de URL's, utilização do Algori
 ### O que foi usado no projeto?
 
 - Java 8
+- Maven
 - Spring Boot
 - Spring Data 
 - PostgreSQL 13
