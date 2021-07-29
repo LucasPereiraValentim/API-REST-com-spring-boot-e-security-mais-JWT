@@ -11,7 +11,7 @@ import br.com.projetospring.models.Usuario;
 import br.com.projetospring.repositories.UsuarioRepository;
 
 @Service
-public class ImplementacaoUserDetailsService implements UserDetailsService{
+public class ImplementsUserDetailsService implements UserDetailsService{
 
 	@Autowired
 	private UsuarioRepository usuarioRepository;

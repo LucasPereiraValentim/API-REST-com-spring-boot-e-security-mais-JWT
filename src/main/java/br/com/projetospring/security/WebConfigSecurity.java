@@ -11,14 +11,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import br.com.projetospring.services.ImplementacaoUserDetailsService;
+import br.com.projetospring.services.ImplementsUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
 public class WebConfigSecurity extends WebSecurityConfigurerAdapter{
 	
 	@Autowired
-	private ImplementacaoUserDetailsService detailsService;
+	private ImplementsUserDetailsService detailsService;
 	
 	//solicitações de acesso
 	@Override
