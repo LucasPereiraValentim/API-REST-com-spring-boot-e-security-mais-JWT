@@ -82,17 +82,19 @@ public class Controller {
 		if (usuario.getId() == null) {
 			return new ResponseEntity<String>("ID não informado", HttpStatus.BAD_REQUEST);
 		} else {
-			String senhaCriptografada = new BCryptPasswordEncoder().encode(usuario.getSenha());
+			Usuario usuarioTemporario = usuarioRepository.findUsuarioByLogin(usuario.getLogin());
 			
-			usuario.setSenha(senhaCriptografada);
+			if (!usuarioTemporario.getSenha().equals(usuario.getSenha())) {
+				String senhaCriptografada = new BCryptPasswordEncoder().encode(usuario.getSenha());
+				usuario.setSenha(senhaCriptografada);
+			}
 			
 			for (int i = 0; i < usuario.getTelefones().size(); i++) {
 				usuario.getTelefones().get(i).setUsuario(usuario);
 			}
+		
 			
 			Usuario usuarioAtualizado = usuarioRepository.save(usuario);
-			
-			
 			return new ResponseEntity<Usuario>(usuarioAtualizado, HttpStatus.OK);
 		}
 	}

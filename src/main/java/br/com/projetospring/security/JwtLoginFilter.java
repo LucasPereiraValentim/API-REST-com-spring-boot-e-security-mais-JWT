@@ -19,9 +19,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import br.com.projetospring.models.Usuario;
 
 //Estabelece o gerenciador do TOKEN
-public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter{
+public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter{
 
-	protected JwtLoginFilter(String url, AuthenticationManager authenticationManager) {
+	protected JWTLoginFilter(String url, AuthenticationManager authenticationManager) {
 		super(new AntPathRequestMatcher(url));
 		setAuthenticationManager(authenticationManager);
 	}
@@ -43,7 +43,7 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter{
 			Authentication authResult) throws IOException, ServletException {
 		
 		try {
-			new JwtTokenAutenticacaoService().addAuthentication(response, authResult.getName());
+			new TokenAuthenticationService().addAuthentication(response, authResult.getName());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

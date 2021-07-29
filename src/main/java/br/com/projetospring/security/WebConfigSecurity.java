@@ -2,6 +2,7 @@ package br.com.projetospring.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -25,15 +26,16 @@ public class WebConfigSecurity extends WebSecurityConfigurerAdapter{
 		
 		//Ativando a proteçao contra usuários que não estão validados por token
 		http.csrf().disable()
-		.authorizeRequests().antMatchers("/index").permitAll()
+		.authorizeRequests().antMatchers(HttpMethod.POST, "/login").permitAll()
+		.antMatchers(HttpMethod.POST, "/usuario/").permitAll()
 		//URL de logout - Redireciona para pag de login
 		.anyRequest().authenticated().and().logout().logoutSuccessUrl("/index")
 		//Mapeia URL de logout e invalida os dados do usuário
 		.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
 		//Filtra requisições de login para autenticação
-		.and().addFilterBefore(new JwtLoginFilter("/login", authenticationManager()),
+		.and().addFilterBefore(new JWTLoginFilter("/login", authenticationManager()),
 				UsernamePasswordAuthenticationFilter.class)
-		.addFilterBefore(new JwtApiAutenticacaoFilter(), UsernamePasswordAuthenticationFilter.class);
+		.addFilterBefore(new JWTAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 		
 	}
 	
