@@ -3,6 +3,8 @@ package br.com.projetospring.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,8 +47,9 @@ public class Controller {
 	
 	
 	@GetMapping(value = "/lista", produces = "application/json")
-	@Cacheable(value = "cache-lista")
-	public ResponseEntity<List<Usuario>> lista() throws InterruptedException{
+	@CacheEvict(value = "chache-usuario", allEntries = true) //Remove o cache não utilizado
+	@CachePut(value = "chache-usuario") //Atualiza o cache caso haja alguma mudança no banco de dados
+	public ResponseEntity<List<Usuario>> lista() {
 		List<Usuario> lista = usuarioRepository.findAll();
 		
 		if (lista.isEmpty()) {
